@@ -1,0 +1,441 @@
+{
+  "steps_max": 895,
+  "integration_window": 0,
+  "observation": {
+    "length": 10,
+    "step": 1,
+    "shape": "matrix",
+    "noise": {
+      "critic": false,
+      "mean": 0,
+      "sigma": 0.005,
+      "theta": 1
+    },
+    "latency": 5,
+    "normalize": false,
+    "states": [
+      {
+        "name": "omega_p",
+        "low": -720,
+        "high": 720,
+        "convert_to_radians": true,
+        "type": "state",
+        "mean": 0,
+        "var": 0.97,
+        "noise_weight": 1.5
+      },
+      {
+        "name": "omega_q",
+        "low": -720,
+        "high": 720,
+        "convert_to_radians": true,
+        "type": "state",
+        "mean": 0,
+        "var": 0.97,
+        "noise_weight": 1.5
+      },
+      {
+        "name": "omega_r",
+        "low": -720,
+        "high": 720,
+        "convert_to_radians": true,
+        "type": "state",
+        "mean": 0,
+        "var": 0.97,
+        "noise_weight": 1.5
+      },
+      {
+        "name": "alpha",
+        "low": -90,
+        "high": 90,
+        "convert_to_radians": true,
+        "type": "state",
+        "noise_weight": 1
+      },
+      {
+        "name": "beta",
+        "low": -90,
+        "high": 90,
+        "convert_to_radians": true,
+        "type": "state",
+        "noise_weight": 1
+      },
+      {
+        "name": "Va",
+        "low": 0,
+        "high": 70,
+        "type": "state",
+        "mean": 21,
+        "var": 1.41,
+        "noise_weight": 15
+      },
+      {
+        "name": "elevon_right",
+        "value": "absolute",
+        "type": "action",
+        "norm": false,
+        "noise_weight": 0
+      },
+      {
+        "name": "elevon_left",
+        "type": "action",
+        "value": "absolute",
+        "norm": false,
+        "noise_weight": 0
+      },
+      {
+        "name": "roll",
+        "type": "target",
+        "value": "integrator",
+        "int_type": "decay",
+        "decay_factor": 0.99
+      },
+      {
+        "name": "pitch",
+        "type": "target",
+        "value": "integrator",
+        "int_type": "decay",
+        "decay_factor": 0.99
+      }
+    ],
+    "goals": [
+      {
+        "name": "roll",
+        "low": -180,
+        "high": 180,
+        "convert_to_radians": true,
+        "type": "state",
+        "mean": 0,
+        "var": 0.55,
+        "noise_weight": 1
+      },
+      {
+        "name": "pitch",
+        "low": -85,
+        "high": 85,
+        "convert_to_radians": true,
+        "type": "state",
+        "mean": 0,
+        "var": 0.15,
+        "noise_weight": 1
+      }
+    ]
+  },
+  "action": {
+    "scale_space": true,
+    "scale_low": -1,
+    "scale_high": 1,
+    "bounds_multiplier": 1.5,
+    "states": [
+      {
+        "name": "elevon_right",
+        "low": -1,
+        "high": 1,
+        "trim": 0.045
+      },
+      {
+        "name": "elevon_left",
+        "low": -1,
+        "high": 1,
+        "trim": 0.045
+      }
+    ],
+    "pid": {
+      "states": [
+        {
+          "name": "throttle",
+          "reference": {
+            "distribution": "uniform",
+            "low": 15,
+            "high": 25
+          }
+        }
+      ]
+    }
+  },
+  "target": {
+    "resample_every": 150,
+    "success_streak_req": 40,
+    "success_streak_fraction": 0.95,
+    "on_success": "none",
+    "states": [
+      {
+        "name": "roll",
+        "convert_to_radians": true,
+        "low": -60,
+        "high": 60,
+        "delta": 180,
+        "class": "constant",
+        "bound": 3
+      },
+      {
+        "name": "pitch",
+        "convert_to_radians": true,
+        "low": -25,
+        "high": 20,
+        "delta": 45,
+        "class": "constant",
+        "bound": 3
+      }
+    ]
+  },
+  "reward": {
+    "form": "absolute",
+    "step_fail": 0,
+    "terms": [
+      {
+        "function_class": "linear",
+        "weight": 1
+      }
+    ],
+    "factors": [
+      {
+        "name": "success",
+        "class": "success",
+        "function_class": "linear",
+        "scaling": 1,
+        "value": 0,
+        "shaping": false,
+        "sign": 1
+      },
+      {
+        "name": "success",
+        "class": "step",
+        "function_class": "linear",
+        "scaling": 1,
+        "value": 0,
+        "shaping": false,
+        "sign": -1
+      },
+      {
+        "name": "goal",
+        "class": "goal",
+        "type": "per_state",
+        "function_class": "linear",
+        "scaling": 1,
+        "value": 1,
+        "shaping": false,
+        "sign": 1
+      },
+      {
+        "name": "roll",
+        "class": "state",
+        "type": "dot",
+        "value_type": "bound",
+        "function_class": "linear",
+        "low": -0.075,
+        "high": 0.075,
+        "scaling": 1,
+        "value": 0.167,
+        "shaping": false,
+        "sign": 1
+      },
+      {
+        "name": "pitch",
+        "class": "state",
+        "type": "dot",
+        "value_type": "bound",
+        "function_class": "linear",
+        "low": -0.075,
+        "high": 0.075,
+        "scaling": 1,
+        "value": 0.167,
+        "shaping": false,
+        "sign": 1
+      }
+    ]
+  },
+  "simulator": {
+    "states": [
+      {
+        "name": "roll",
+        "init_min": -40,
+        "init_max": 40,
+        "convert_to_radians": true
+      },
+      {
+        "name": "pitch",
+        "init_min": -15,
+        "init_max": 15,
+        "convert_to_radians": true
+      },
+      {
+        "name": "Va",
+        "init_min": 13,
+        "init_max": 26
+      },
+      {
+        "name": "alpha",
+        "init_min": -8,
+        "init_max": 8,
+        "convert_to_radians": true
+      },
+      {
+        "name": "beta",
+        "init_min": -10,
+        "init_max": 10,
+        "convert_to_radians": true
+      },
+      {
+        "name": "omega_p",
+        "init_min": -60,
+        "init_max": 60,
+        "convert_to_radians": true
+      },
+      {
+        "name": "omega_q",
+        "init_min": -60,
+        "init_max": 60,
+        "convert_to_radians": true
+      },
+      {
+        "name": "omega_r",
+        "init_min": -60,
+        "init_max": 60,
+        "convert_to_radians": true
+      },
+      {
+        "name": "elevator",
+        "init_min": -30,
+        "init_max": 30,
+        "convert_to_radians": true
+      },
+      {
+        "name": "aileron",
+        "init_min": -30,
+        "init_max": 30,
+        "convert_to_radians": true
+      },
+      {
+        "name": "throttle",
+        "init_min": 0,
+        "init_max": 1
+      }
+    ],
+    "model": {
+      "var_type": "relative",
+      "var": 0.1,
+      "clip": 0.2,
+      "use_sampler": false,
+      "parameters": [
+        {"name": "C_D_0"},
+        {"name": "C_D_alpha1"},
+        {"name": "C_D_alpha2"},
+        {"name": "C_D_beta1"},
+        {"name": "C_D_beta2"},
+        {"name": "C_D_delta_e"},
+        {"name": "C_D_p",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_L_0"},
+        {"name": "C_L_alpha"},
+        {"name": "C_L_delta_e"},
+        {"name": "C_L_q",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_Y_beta"},
+        {"name": "C_Y_delta_a"},
+        {"name": "C_Y_p",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_Y_r",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_l_beta"},
+        {"name": "C_l_delta_a"},
+        {"name": "C_l_p",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_l_r",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_m_0"},
+        {"name": "C_m_alpha"},
+        {"name": "C_m_delta_e"},
+        {"name": "C_m_fp"},
+        {"name": "C_m_q",
+        "var": 0.5,
+        "clip": 0.95},
+        {"name": "C_n_beta"},
+        {"name": "C_n_delta_a"},
+        {"name": "C_n_p",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_n_r",
+        "var": 0.2,
+        "clip": 0.5},
+        {"name": "C_prop"},
+        {"name": "M"},
+        {"name": "a_0",
+        "var": 0.1,
+        "clip": 0.2},
+        {"name": "k_Omega"},
+        {"name": "k_T_P"},
+        {"name": "k_motor"},
+        {"name": "Jx",
+        "var": 0.1,
+        "clip": 0.2},
+        {"name": "Jy",
+        "var": 0.1,
+        "clip": 0.2},
+        {"name": "Jz",
+        "var": 0.1,
+        "clip": 0.2},
+        {"name": "Jxz",
+        "var": 0.1,
+        "clip": 0.2}
+      ]
+    },
+    "dt": {
+      "base": {
+        "distribution": "constant",
+        "value": 0.02
+      },
+      "noise": {
+        "distribution": "exponential",
+        "low": 250,
+        "high": 1000
+      }
+    }
+  },
+  "render": {
+    "plot_action": true,
+    "plot_reward": true,
+    "plot_target": true,
+    "plot_goal": true
+  },
+  "metrics": [
+    {
+      "name": "rise_time",
+      "high": 0.9,
+      "low": 0.1
+    },
+    {
+      "name": "settling_time"
+    },
+    {
+      "name": "overshoot"
+    },
+    {
+      "name": "total_error"
+    },
+    {
+      "name": "avg_error"
+    },
+    {
+      "name": "control_variation"
+    },
+    {
+      "name": "success"
+    },
+    {
+      "name": "success_time_frac"
+    },
+    {
+      "name": "end_error"
+    },
+    {
+      "name": "gain"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+tqdm
+tensorflow==1.15.4
+git+https://github.com/eivindeb/stable-baselines@0dfdd5a556ee40b0fcf6f51dadbe2f76aeb1cde5#egg=stable_baselines
+git+https://github.com/eivindeb/fixed-wing-gym@6d7c9770307c5cf0e063027f145a085cd54bcd17#egg=gym_fixed_wing
+git+https://github.com/eivindeb/pyfly@6ad88dc58030ead7048ccfb77083502ff71ae90f#egg=pyfly-fixed-wing
