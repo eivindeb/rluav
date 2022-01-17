@@ -9,7 +9,7 @@
       "initial_std": 0.25
     }
   },
-  "timesteps": 1e5,
+  "timesteps": 5e4,
   "log_interval": 8,
   "log_tensorboard": true,
   "save_interval": 300,

@@ -24,7 +24,7 @@ takes as arguments a path to save the controller model to, and if training a new
 training from a checkpoint) takes paths to environment (gym-fixed-wing), simulator (pyfly), and RL (stable-baselines)
 configuration files, as well as optional tensorboard ip and port:
 ```shell
-python train_controller.py models/test_controller \
+python train_controller.py models/example_controller \
  --rl_config_path=configs/sac_config.json \
  --sim_config_path=configs/sim_config.json \
  --aircraft_param_path=configs/aircraft_params.mat \
@@ -32,6 +32,9 @@ python train_controller.py models/test_controller \
  --tensorboard_ip=localhost \
  --tensorboard_port=6010
 ```
+Training can be monitored through Tensorboard. The above command produced the following in about 20 minutes of wall-clock time:
+
+![tensorboard](figures/tb.png)
 
 The reinforcement learning algorithm is configured according to the file provided as the "rl_config_path" argument, see 
 [stable-baselines](https://stable-baselines.readthedocs.io/en/master) documentation for the meaning of these parameters.
@@ -63,14 +66,10 @@ Produces:
 ## UAV Model Parameter Randomization
 As described in the [paper](https://arxiv.org/abs/2111.04153), in order to robustify the learned controller we employ the 
 domain randomization technique, in the form of randomly sampling the parameters of the UAV model at the start of every episode.
-The parameters are sampled according to the following, where u corresponds to the value as given in the parameter file located at
+The parameters are sampled according to the following, where µ corresponds to the value as given in the parameter file located at
 configs/aircraft_param.mat, and N is the normal distribution:
 
-| Parameter                                                                                                                                                                                                                                                                | Distribution  | Clip        |
-|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|-------------|
-| C_D, C_D_alpha1, C_D_alpha2, C_D_beta1, C_D_beta2, C_D_delta_e, C_L_0, C_L_alpha, C_L_delta_e, C_Y_beta, C_Y_delta_e, C_l_beta, C_l_delta_a, C_m_0, C_m_alpha, C_m_delta_e, C_m_f_p, C_n_beta, C_n_delta_a, C_prop, J_x, J_y, J_z, J_xz, M, a_0, k_Omega, k_T_p, k_motor | N(u, 0.1 * u) | +- u * 0.2  |
-| C_D_p, C_L_q, C_Y_p, C_Y_r, C_l_p, C_l_r, C_n_p, C_n_r                                                                                                                                                                                                                   | N(u, 0.2 * u) | +- u * 0.5  |
-| C_m_q                                                                                                                                                                                                                                                                    | N(u, 0.5 * u) | +- u * 0.95 |
+![UAV Model Parameters](figures/uav_parameters.PNG)
 
 
 ## Citation
